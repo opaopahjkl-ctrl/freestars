@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#12163a">
+<title>Звёзды</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+<canvas id="sky" aria-hidden="true"></canvas>
+
+<main class="app">
+
+  <!-- Главная -->
+  <section id="home" class="screen is-active">
+    <header class="hero">
+      <p class="hello" id="hello">Привет!</p>
+      <h1>Звёзды тем, кому они нужны</h1>
+      <p class="lead">Расскажи, зачем тебе звёзды. Мы рассмотрим заявку и выплатим одобренную сумму прямо на твой аккаунт.</p>
+    </header>
+
+    <div class="status" id="status" role="status"></div>
+
+    <div class="actions">
+      <button class="big big--ask" data-go="request">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z"/></svg>
+        <span><b>Попросить звёзды</b><small>До <span data-max>5000</span> ⭐ за одну заявку</small></span>
+      </button>
+      <button class="big big--give" data-go="donate">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.3C1.2 8.4 3 5 6.4 5c2 0 3.6 1.1 4.6 2.7h2C14 6.1 15.600 5 17.600 5 21 5 22.800 8.400 21.500 11.700 19.500 16.400 12 21 12 21z"/></svg>
+        <span><b>Поддержать проект</b><small>Любая сумма от 1 ⭐</small></span>
+      </button>
+    </div>
+
+    <h2 class="h2">Как это работает</h2>
+    <ol class="steps">
+      <li><b>Подай заявку</b><span>Укажи сумму и честно опиши, зачем она нужна.</span></li>
+      <li><b>Мы проверим</b><span>Админ посмотрит заявку и примет решение.</span></li>
+      <li><b>Получи звёзды</b><span>Если заявку одобрили, звёзды придут на аккаунт сразу.</span></li>
+    </ol>
+  </section>
+
+  <!-- Заявка -->
+  <section id="request" class="screen">
+    <h2 class="h1">Заявка на звёзды</h2>
+
+    <div class="lock" id="lock" hidden>
+      <b>Новая заявка пока недоступна</b>
+      <span id="lock-text"></span>
+    </div>
+
+    <fieldset class="form" id="form">
+      <div class="amount">
+        <button class="step" id="minus" type="button" aria-label="Меньше">−</button>
+        <label class="amount-field">
+          <input id="amt" inputmode="numeric" autocomplete="off" value="100" aria-label="Сколько звёзд нужно">
+          <span class="star-ico" id="amt-star" aria-hidden="true">⭐</span>
+        </label>
+        <button class="step" id="plus" type="button" aria-label="Больше">+</button>
+      </div>
+
+      <input id="range" class="range" type="range" min="0" max="1000" step="1" aria-label="Количество звёзд">
+      <div class="chips" id="chips"></div>
+
+      <label class="field" id="desc-field">
+        <span class="field-name">Зачем тебе нужны звёзды</span>
+        <textarea id="desc" rows="6" maxlength="800" placeholder="Расскажи подробно: на что потратишь и почему это важно"></textarea>
+        <small id="count" class="count">0 из 800, минимум 10</small>
+      </label>
+    </fieldset>
+  </section>
+
+  <!-- Пожертвование -->
+  <section id="donate" class="screen">
+    <h2 class="h1">Поддержать проект</h2>
+    <p class="lead">Пожертвования помогают выплачивать звёзды тем, кто в них нуждается. Спасибо, что ты с нами.</p>
+    <div class="presets" id="presets"></div>
+    <label class="field">
+      <span class="field-name">Или впиши свою сумму</span>
+      <span class="custom">
+        <input id="custom" inputmode="numeric" autocomplete="off" placeholder="От 1 до 100 000">
+        <span aria-hidden="true">⭐</span>
+      </span>
+    </label>
+  </section>
+
+  <!-- Помощь -->
+  <section id="help" class="screen">
+    <h2 class="h1">Помощь</h2>
+    <div class="faq">
+      <details><summary>Сколько звёзд можно попросить?</summary><p>До <span data-max>5000</span> ⭐ в одной заявке.</p></details>
+      <details><summary>Как часто можно подавать заявки?</summary><p>Одна заявка в неделю, даже если предыдущую отклонили. Когда лимит закончится, мы покажем дату на главном экране.</p></details>
+      <details><summary>Когда придут звёзды?</summary><p>Как только админ одобрит заявку, звёзды будут выплачены автоматически, а бот напишет тебе в чат.</p></details>
+      <details><summary>Что, если заявку отклонили?</summary><p>Бот пришлёт причину отказа. Новую заявку можно подать через неделю после предыдущей.</p></details>
+    </div>
+    <button class="ghost" id="support-btn" type="button">Написать в поддержку</button>
+  </section>
+
+</main>
+
+<div class="actionbar" id="actionbar" hidden>
+  <button class="cta" id="cta" type="button"></button>
+</div>
+
+<nav class="tabs" aria-label="Разделы">
+  <button class="tab is-active" data-go="home" type="button">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 8h-2.500v9h-5v-6h-3v6h-5v-9H3z"/></svg>Главная
+  </button>
+  <button class="tab" data-go="request" type="button">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.500l2.900 6.100 6.600.8-4.900 4.600 1.300 6.600L12 17.300 6.100 20.600l1.300-6.600L2.500 9.400l6.600-.8z"/></svg>Заявка
+  </button>
+  <button class="tab" data-go="donate" type="button">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.500-4.600-9.500-9.300C1.200 8.400 3 5 6.400 5c2 0 3.600 1.100 4.600 2.700h2C14 6.100 15.600 5 17.600 5 21 5 22.800 8.400 21.500 11.700 19.500 16.400 12 21 12 21z"/></svg>Помочь
+  </button>
+  <button class="tab" data-go="help" type="button">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15.500h-2v-2h2zm1.800-6.300c-.9.900-1.300 1.300-1.300 2.300h-2c0-1.600.7-2.400 1.600-3.300.6-.6 1-1 1-1.700 0-.8-.7-1.500-1.600-1.500-1 0-1.600.7-1.700 1.600l-2-.3C8.100 6.600 9.700 5.300 12 5.300c2.100 0 3.700 1.300 3.700 3.100 0 1.100-.5 1.800-.9 2.800z"/></svg>Помощь
+  </button>
+</nav>
+
+<div class="scrim" id="scrim" hidden></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title" hidden>
+  <h3 id="sheet-title"></h3>
+  <dl id="sheet-rows"></dl>
+  <div class="sheet-btns">
+    <button class="ghost" id="sheet-no" type="button">Назад</button>
+    <button class="cta cta--sm" id="sheet-yes" type="button">Отправить</button>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script src="app.js"></script>
+</body>
+</html>
